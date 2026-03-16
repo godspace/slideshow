@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автоматическое слайдшоу</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 500px;
+            animation: fade 1.5s;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+
+        /* Точки-индикаторы */
+        .dots-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dot.active {
+            background: white;
+        }
+
+        /* Кнопки навигации */
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        .prev:hover, .next:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .slide {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slideshow-container">
+        <!-- Слайды -->
+        <div class="slide active">
+            <img src="https://avatars.mds.yandex.net/i?id=ddb970849f5346289561fbc7e30235ad4990f8ff-4480798-images-thumbs&n=13" alt="Слайд 1">
+        </div>
+        <div class="slide">
+            <img src="https://avatars.mds.yandex.net/i?id=74b0a6f9486cbf529c8fa38e9cc489adda05969a-5663462-images-thumbs&n=13" alt="Слайд 2">
+        </div>
+        <div class="slide">
+            <img src="https://avatars.mds.yandex.net/i?id=65fe192e79f23d1a985cb55c8600e263602a90d0-4303862-images-thumbs&n=13" alt="Слайд 3">
+        </div>
+
+        <!-- Кнопки навигации -->
+        <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="next" onclick="changeSlide(1)">&#10095;</button>
+
+        <!-- Точки-индикаторы -->
+        <div class="dots-container">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+    </div>
+
+    <script>
+        let slideIndex = 1;
+        let slideInterval;
+
+        // Автоматическое переключение каждые 5 секунд
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 5000);
+        }
+
+        // Остановка при наведении
+        document.querySelector('.slideshow-container').addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+        });
+
+        document.querySelector('.slideshow-container').addEventListener('mouseleave', () => {
+            startAutoSlide();
+        });
+
+        // Переключение слайда
+        function changeSlide(n) {
+            showSlide(slideIndex += n);
+        }
+
+        // Переход к конкретному слайду
+        function currentSlide(n) {
+            showSlide(slideIndex = n);
+        }
+
+        // Показ слайда
+        function showSlide(n) {
+            let slides = document.getElementsByClassName("slide");
+            let dots = document.getElementsByClassName("dot");
+            
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("active");
+            }
+            
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove("active");
+            }
+            
+            slides[slideIndex - 1].classList.add("active");
+            dots[slideIndex - 1].classList.add("active");
+        }
+
+        // Запуск автопереключения
+        startAutoSlide();
+    </script>
+
+</body>
+</html>
